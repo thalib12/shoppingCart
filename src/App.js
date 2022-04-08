@@ -1,25 +1,28 @@
-import React from "react";
+import React, { lazy } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Counter from "./Counter";
-import Fileupload from "./Fileupload";
-import Home from "./Home";
-import Login from "./Login";
-import Registration from "./Registration";
+import checkLogin from "./checkLogin";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Registration from "./components/Registration";
+import PrivateRouter from "./PrivateRouter";
+import Cart from "./reducers/Cart";
 
 
 function App() {
   return (
-    <React.Fragment >
-      <Router>
-        <Routes>
+    <Router>
+     
+      <Routes>
+        <Route path={"/"} element={<Registration />} />
+        <Route path={"/login"} element={<Login />} />
+        <Route path={'/'} element={<PrivateRouter />}>
+          <Route path={'/home'} element={<Home />} />
+
+        </Route>
+       <Route path={"/cart"} element={<Cart/>} />
         
-        <Route path={"/"} element={<Registration/>}/>
-          <Route path={"/login"} element={<Login/>}/>
-          <Route path={"/home"} element={<Home/>}/>
-        </Routes>
-      </Router>
-    
-    </React.Fragment>
+      </Routes>
+    </Router>
   );
 }
 

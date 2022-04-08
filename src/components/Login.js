@@ -19,6 +19,7 @@ function Login() {
     console.log('userdattta', name, password);
     const user = { name, password }
     if (store.username == name && store.password == password) {
+      localStorage.setItem("user",JSON.stringify(user))
       navigate("/home")
     }
     else {

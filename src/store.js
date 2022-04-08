@@ -2,22 +2,21 @@
 import { applyMiddleware, combineReducers, createStore } from "redux"
 import createSagaMiddleware from "@redux-saga/core"
 import thunk from "redux-thunk"
-import { reducer } from "./reducer"
-import mySaga from "./saga"
-import { userReducer } from "./userReducer"
-import { productReducer } from "./productReducer"
-
-// const sagaMiddleware=createSagaMiddleware()
-
+import { userReducer } from "./reducers/userReducer"
+import productReducer from "./reducers/productReducer"
+import { rootSaga } from "./saga/rootSaga"
+import productSaga from "./saga/productsSaga"
+import { cartReducer } from "./reducers/cartReducer"
 
 
-
-// const store=createStore(reducer,applyMiddleware(sagaMiddleware))
-// sagaMiddleware.run(mySaga)
 const appReducer = combineReducers({
     products: productReducer,
-    user: userReducer
+    user: userReducer,
+    cart:cartReducer
 })
-const store = createStore(appReducer, applyMiddleware(thunk))
-console.log("Storee......", store);
+
+const sagaMiddleware = createSagaMiddleware()
+const store = createStore(appReducer, applyMiddleware(sagaMiddleware))
+sagaMiddleware.run(productSaga)
+
 export default store

@@ -1,12 +1,19 @@
+
+import { FETCH_PRODUCT_SUCCESS } from "../actions/actionTypes"
+
 const initialState = {
     products: []
 }
 
-export const productReducer = (prevState = initialState, action) => {
-    console.log("Actiooon", action)
+export default (prevState = initialState, action) => {
     switch (action.type) {
 
         case "GET_DATA":
+            return {
+                ...prevState,
+            }
+
+        case FETCH_PRODUCT_SUCCESS:
             return {
                 ...prevState,
                 products: action.payload
@@ -19,11 +26,11 @@ export const productReducer = (prevState = initialState, action) => {
 
             }
         case "DELETE_PRD":
-            let newData=prevState.products.filter(item=>item.title!=action.payload)
+            
             return {
-            ...prevState,
-            products:newData
-            }    
+                ...prevState,
+                products: prevState.products.filter(item => item.title != action.payload)
+            }
         default:
             return {
                 ...prevState

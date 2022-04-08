@@ -1,9 +1,10 @@
-import { GET_USERS_FETCH, GET_USERS_SUCCESS } from "./Actions";
+import { GET_USERS_FETCH, GET_USERS_SUCCESS } from "../Actions";
 
 export const reducer=(previousState={users:[],status:""},action)=>{
     switch(action.type){
 
        case GET_USERS_SUCCESS:
+           console.log("Actionnn",action);
            return{
                ...previousState,
                users:action.users,

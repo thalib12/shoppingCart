@@ -1,8 +1,12 @@
 import { React, useEffect, useState } from 'react'
 import { Navbar, Nav, Container, Button, Modal, Card, Col, Row, Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
-import { getData } from './productsapi';
+import { fetchProductsRequest } from '../actions/action';
+import { getData } from '../productsapi';
+import {useNavigate} from 'react-router-dom'
+import { selectProducts } from '../selectors';
 import "./style.css"
+import checkLogin from '../checkLogin';
 
 function Home() {
   const [lgShow, setLgShow] = useState(false);
@@ -11,26 +15,29 @@ function Home() {
   const [pdprice, setPdprice] = useState("")
   const [pdrating, setPdrating] = useState("")
   const dispatch = useDispatch()
-
+  const [cart,setCart]=useState([])
   useEffect(() => {
-    dispatch(getData)
+    dispatch(fetchProductsRequest())
   }, [])
 
  
+const navigate=useNavigate()
 
-  
- const data = useSelector((state) => {
+  const data = useSelector((state) => {
     console.log("Statet ", state)
     return state
   })
 
-  const selectProducts=(state)=>state.products.products
+//   const condd=checkLogin()
 
-  const products=selectProducts(data)
-  const titles=selectProducts(data).map(item=>item.title)
-  const price=selectProducts(data).map(item=>item.price)
-  console.log("Titles",titles,price);
-  
+ console.log("get datttta",data)
+
+  const products = selectProducts(data)
+  // const products = []
+  // const titles=selectProducts(data).map(item=>item.title)
+  // const price=selectProducts(data).map(item=>item.price)
+  // console.log("Titles",titles,price);
+
 
   console.table(products)
 
@@ -45,10 +52,10 @@ function Home() {
     alert("New product added succesfully")
   }
 
-  const deleteItem=(item)=>{
+  const deleteItem = (item) => {
     dispatch({
-      type:"DELETE_PRD",
-      payload:item.title
+      type: "DELETE_PRD",
+      payload: item.title
     })
   }
   function truncate(input) {
@@ -58,6 +65,11 @@ function Home() {
     return input;
   };
 
+  const logout=()=>{
+    localStorage.clear()
+    navigate("/login")
+  }
+   console.log("Cart items..",cart)
   return (
     <div className='maindiv'>
       <>
@@ -65,9 +77,9 @@ function Home() {
           <Container>
             <Navbar.Brand href="#home">Shopping Cart</Navbar.Brand>
             <Nav className="me-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
+              <Nav.Link href="#home" onClick={logout}>Logout</Nav.Link>
               <Nav.Link onClick={() => setLgShow(true)} >Add Items</Nav.Link>
-
+              <Nav.Link onClick={()=>navigate("/cart")}  >Cart ({data.cart.cart.length})</Nav.Link>
             </Nav>
           </Container>
         </Navbar>
@@ -106,11 +118,11 @@ function Home() {
 
 
       <Row style={{ marginTop: "50px" }}>
-        {products.map((item) => (
+        {products.length > 0 && products.map((item) => (
           <Col key={item.id} style={{ marginTop: "40px" }}>
             <Card className='mainbox' style={{ width: '15rem', height: "400px" }}>
-              <button className='cross' onClick={()=>deleteItem(item)}>X</button>
-              <Card.Img className='img' style={{ height: "200px",padding:"30px",borderBottom:"1px solid black" }} variant="top" src={item.image} />
+              <button className='cross' onClick={() => deleteItem(item)}>X</button>
+              <Card.Img className='img' style={{ height: "200px", padding: "30px" }} variant="top" src={item.image} />
               <Card.Body>
                 {/* <Card.Title>{item.title}</Card.Title> */}
                 <Card.Text style={{ textAlign: "center", fontWeight: "bold" }}>
@@ -120,10 +132,10 @@ function Home() {
                   <Card.Text style={{ textAlign: "center" }}>
                     Price : {item.price} $
                   </Card.Text>
-                  <Card.Text style={(item.rating.rate >= 3) ? { textAlign: "center", color: "green", fontWeight: "bold",fontFamily:"sans-serif" } : { fontWeight: "bold", color: "red", textAlign: "center" }}>
+                  <Card.Text style={(item.rating.rate >= 3) ? { textAlign: "center", color: "green", fontWeight: "bold", fontFamily: "sans-serif" } : { fontWeight: "bold", color: "red", textAlign: "center" }}>
                     Rating : {item.rating.rate} ★
                   </Card.Text>
-                  <Button variant="dark">Add to cart 🛒</Button>
+                  <Button variant="dark" onClick={()=>dispatch({type:"ADD_CART",payload:item})}>Add to cart 🛒</Button>
 
                 </div>
               </Card.Body>
